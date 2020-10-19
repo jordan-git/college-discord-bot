@@ -37,6 +37,20 @@ export const getStartHour = (input: string) => {
     return input.match(/(\d{2}):\d{2} - \d{2}:\d{2}/)[1] || false;
 };
 
+export const getIdFromMessage = (content: string) => {
+    if (!content) return;
+
+    if (content.startsWith('<#') && content.endsWith('>')) {
+        content = content.slice(2, -1);
+
+        if (content.startsWith('!')) {
+            content = content.slice(1);
+        }
+
+        return content;
+    }
+};
+
 type DailyTimetable = {
     name: string;
     schedule: { time: string; subject: string; moodle?: string }[];
