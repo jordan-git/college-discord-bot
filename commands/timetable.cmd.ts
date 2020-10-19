@@ -1,6 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 import { Command } from './command';
 
+// Assists on getting day by string name with Date.getDay()
 const weekDays = [
     'Monday',
     'Tuesday',
@@ -15,8 +16,6 @@ type DailyTimetable = {
     name: string;
     schedule: { time: string; subject: string }[];
 };
-
-type subject = { name: string; moodle: string };
 
 const weeklySchedule: DailyTimetable[] = [
     {
@@ -63,23 +62,6 @@ export const command: Command = {
     name: 'timetable',
     description: 'Timetable',
     execute(message, args) {
-        // let outputMessage = '';
-
-        // if (args.length === 0) {
-        //     for (const day of schedule) {
-        //         if (weekDays[new Date().getDay()] === day.day) {
-        //             const today = new Date();
-        //             outputMessage += `**${
-        //                 day.day
-        //             }**, ${today.toLocaleTimeString()}\n\n`;
-
-        //             for (const _class of day.schedule) {
-        //                 outputMessage += `**${_class.subject}:** ${_class.time}\n`;
-        //             }
-        //         }
-        //     }
-        // }
-
         const embed = new MessageEmbed()
             .setTitle('Timetable')
             // .setAuthor('College Assistant')
