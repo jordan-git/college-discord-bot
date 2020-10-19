@@ -10,7 +10,9 @@ export const command: Command = {
         const embed = new MessageEmbed()
             .setTitle('Timetable')
             // .setAuthor('College Assistant')
-            // .setDescription('Description')
+            .setDescription(
+                `**Current Time:** ${new Date().toLocaleTimeString()}`
+            ) // TODO: Show next class and ETA
             .setThumbnail('https://i.imgur.com/am7FRar.png')
             .setTimestamp()
             .setFooter(
@@ -25,14 +27,20 @@ export const command: Command = {
                 if (day.name.toLowerCase() === todayAsString().toLowerCase()) {
                     embed.setTitle(`Timetable\t\t[${day.name}]`);
                     for (const _class of day.schedule) {
-                        embed.addField(_class.subject, _class.time);
+                        embed.addField(
+                            _class.subject,
+                            _class.time +
+                                (_class.moodle
+                                    ? `\n[Moodle](${_class.moodle})`
+                                    : '')
+                        );
                     }
                 }
             }
 
             const responseMsg = await message.channel.send(embed);
 
-            responseMsg.delete({ timeout: 10000 });
+            responseMsg.delete({ timeout: 30000 });
             message.delete();
         } else if (args.length === 1) {
             let inSchedule = false;

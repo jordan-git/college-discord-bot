@@ -39,7 +39,7 @@ export const getStartHour = (input: string) => {
 
 type DailyTimetable = {
     name: string;
-    schedule: { time: string; subject: string }[];
+    schedule: { time: string; subject: string; moodle?: string }[];
 };
 
 export const weeklySchedule: DailyTimetable[] = [
@@ -49,24 +49,53 @@ export const weeklySchedule: DailyTimetable[] = [
             {
                 time: '10:00 - 12:00',
                 subject: 'Advanced Internet Technologies',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=57',
             },
-            { time: '13:00 - 15:00', subject: 'Advanced Databases' },
-            { time: '15:00 - 17:00', subject: 'Team Project' },
+            {
+                time: '13:00 - 15:00',
+                subject: 'Advanced Databases',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=137',
+            },
+            {
+                time: '15:00 - 17:00',
+                subject: 'Team Project',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=58',
+            },
         ],
     },
     {
         name: 'Tuesday',
         schedule: [
-            { time: '09:00 - 11:00', subject: 'Advanced Programming' },
-            { time: '14:00 - 16:00', subject: 'Team Project' },
-            { time: '18:00 - 20:00', subject: 'Wireless Networking' },
+            {
+                time: '09:00 - 11:00',
+                subject: 'Advanced Programming',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=567',
+            },
+            {
+                time: '14:00 - 16:00',
+                subject: 'Team Project',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=58',
+            },
+            {
+                time: '18:00 - 20:00',
+                subject: 'Wireless Networking',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=568',
+            },
         ],
     },
     {
         name: 'Wednesday',
         schedule: [
-            { time: '09:00 - 11:00', subject: 'Advanced Programming' },
-            { time: '11:00 - 13:00', subject: 'Team Project' },
+            {
+                time: '09:00 - 11:00',
+                subject: 'Advanced Programming',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=567',
+            },
+            {
+                time: '11:00 - 13:00',
+                subject: 'Team Project',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=58',
+            },
         ],
     },
     {
@@ -75,10 +104,22 @@ export const weeklySchedule: DailyTimetable[] = [
             {
                 time: '09:00 - 10:00',
                 subject: 'Advanced Internet Technologies',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=57',
             },
-            { time: '10:00 - 12:00', subject: 'Work Placement' },
-            { time: '14:00 - 15:00', subject: 'Advanced Databases' },
-            { time: '15:00 - 17:00', subject: 'Data Structures' },
+            {
+                time: '10:00 - 12:00',
+                subject: 'Work Placement',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=440',
+            },
+            {
+                time: '14:00 - 15:00',
+                subject: 'Advanced Databases',
+                moodle: 'https://mymoodle.ncirl.ie/course/view.php?id=137',
+            },
+            {
+                time: '15:00 - 17:00',
+                subject: 'Data Structures',
+            },
         ],
     },
 ];

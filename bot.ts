@@ -34,12 +34,27 @@ export class Bot {
             this.commands.set(command.name, command);
         }
 
-        this.client.on('ready', () => {
-            console.log('Ready');
+        this.handleReady();
 
+        this.handleMessage();
+
+        this.client.login(process.env.DISCORD_TOKEN);
+    }
+
+    private handleReady() {
+        this.client.on('ready', () => {
+            console.log(`Logged in as ${this.client.user.tag}`);
+            this.client.user.setPresence({
+                activity: {
+                    name: 'your commands',
+                    type: 'LISTENING',
+                },
+                status: 'online',
+            });
             // TODO: Load react-role messages
         });
-
+    }
+    private handleMessage() {
         this.client.on('message', async (message) => {
             if (
                 !message.content.startsWith(process.env.PREFIX) ||
@@ -61,13 +76,7 @@ export class Bot {
                     (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
                 );
 
-            if (!command) {
-                const content = 'Unknown command.';
-                const responseMsg = await message.channel.send(content);
-
-                responseMsg.delete({ timeout: 4000 });
-                message.delete({ timeout: 4000 });
-            }
+            if (!command) return;
 
             try {
                 command.execute(message, args);
@@ -75,9 +84,5 @@ export class Bot {
                 console.error(error);
             }
         });
-
-        this.client.login(process.env.DISCORD_TOKEN);
     }
 }
-
-const b = new Bot();
