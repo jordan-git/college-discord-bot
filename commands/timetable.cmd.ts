@@ -94,6 +94,7 @@ export const command: Command = {
             for (const day of weeklySchedule) {
                 if (day.name.toLowerCase() === args[0].toLowerCase()) {
                     inSchedule = true;
+
                     embed.setTitle(`Timetable - ${day.name}`);
                     for (const _class of day.schedule) {
                         embed.addField(_class.subject, _class.time);
