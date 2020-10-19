@@ -7,6 +7,8 @@ import { Command } from './commands/command';
 // Store .env variables in process.env
 dotenv.config();
 
+// TODO: Add react-role system
+
 export class Bot {
     private commands: Collection<string, Command>;
     private client: Client;
@@ -34,6 +36,8 @@ export class Bot {
 
         this.client.on('ready', () => {
             console.log('Ready');
+
+            // TODO: Load react-role messages
         });
 
         this.client.on('message', async (message) => {
@@ -50,18 +54,20 @@ export class Bot {
                 .split(' ');
             const commandName = args.shift().toLowerCase();
 
-            // Check if command exists in client.commands
+            // Check if command exists in client.commands (alias support)
             const command =
                 this.commands.get(commandName) ||
                 this.commands.find(
                     (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
                 );
 
-            if (!command)
-                return message.channel.send('Unknown command.').then((msg) => {
-                    msg.delete({ timeout: 4000 });
-                    message.delete({ timeout: 4000 });
-                });
+            if (!command) {
+                const content = 'Unknown command.';
+                const responseMsg = await message.channel.send(content);
+
+                responseMsg.delete({ timeout: 4000 });
+                message.delete({ timeout: 4000 });
+            }
 
             try {
                 command.execute(message, args);
