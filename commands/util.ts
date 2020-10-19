@@ -40,6 +40,8 @@ export const getStartHour = (input: string) => {
 export const getIdFromMessage = (content: string) => {
     if (!content) return;
 
+    if (content.match(/^[0-9]{18}/) != null) return content;
+
     if (content.startsWith('<#') && content.endsWith('>')) {
         content = content.slice(2, -1);
 

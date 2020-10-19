@@ -22,10 +22,16 @@ export const command: Command = {
                 getIdFromMessage(args[0])
             );
 
-            if (channel.type === 'text')
+            if (channel.type === 'text') {
                 (channel as TextChannel).send(args.slice(1).join(' '));
+                message.delete();
+            } else {
+                const responseMsg = await message.channel.send(
+                    'That channel is not a text channel'
+                );
 
-            message.delete();
+                responseMsg.delete({ timeout: 6000 });
+            }
         }
     },
 };
