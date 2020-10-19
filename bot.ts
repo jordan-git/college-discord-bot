@@ -49,8 +49,13 @@ export class Bot {
                 .split(' ');
             const commandName = args.shift().toLowerCase();
 
-            if (!this.client.commands.has(commandName)) return;
-            const command = this.client.commands.get(commandName);
+            const command =
+                this.client.commands.get(commandName) ||
+                this.client.commands.find(
+                    (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
+                );
+
+            if (!command) return;
 
             try {
                 command.execute(message, args);

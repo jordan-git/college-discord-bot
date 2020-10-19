@@ -17,7 +17,7 @@ type DailyTimetable = {
     schedule: { time: string; subject: string }[];
 };
 
-const weeklySchedule: DailyTimetable[] = [
+export const weeklySchedule: DailyTimetable[] = [
     {
         name: 'Monday',
         schedule: [
@@ -60,6 +60,7 @@ const weeklySchedule: DailyTimetable[] = [
 
 export const command: Command = {
     name: 'timetable',
+    aliases: ['schedule', 'tt'],
     description: 'Timetable',
     execute(message, args) {
         const embed = new MessageEmbed()
@@ -72,16 +73,62 @@ export const command: Command = {
 
         if (args.length === 0) {
             for (const day of weeklySchedule) {
-                if (day.name === weekDays[new Date().getDay()]) {
+                if (
+                    day.name.toLowerCase() ===
+                    weekDays[new Date().getDay()].toLowerCase()
+                ) {
+                    embed.setTitle(`Timetable - ${day.name}`);
                     for (const _class of day.schedule) {
                         embed.addField(_class.subject, _class.time);
                     }
                 }
             }
+            return message.channel.send(embed).then((msg) => {
+                msg.delete({ timeout: 10000 });
+                message.delete({ timeout: 10000 });
+            });
+        }
+
+        if (args.length === 1) {
+            let inSchedule = false;
+            for (const day of weeklySchedule) {
+                if (day.name.toLowerCase() === args[0].toLowerCase()) {
+                    inSchedule = true;
+                    embed.setTitle(`Timetable - ${day.name}`);
+                    for (const _class of day.schedule) {
+                        embed.addField(_class.subject, _class.time);
+                    }
+                }
+            }
+
+            //If not in schedule but is a week day
+            if (
+                !inSchedule &&
+                weekDays.map((e) => e.toLowerCase()).includes(args[0])
+            )
+                message.channel
+                    .send('You have no classes on that day.')
+                    .then((msg) => {
+                        msg.delete({ timeout: 6000 });
+                        message.delete({ timeout: 6000 });
+                    });
+            else if (!inSchedule)
+                message.channel.send('Invalid day of the week.').then((msg) => {
+                    msg.delete({ timeout: 6000 });
+                    message.delete({ timeout: 6000 });
+                });
+            else
+                return message.channel.send(embed).then((msg) => {
+                    msg.delete({ timeout: 6000 });
+                    message.delete({ timeout: 6000 });
+                });
         }
 
         message.channel
-            .send(embed)
-            .then((msg) => msg.delete({ timeout: 30000 }));
+            .send(`Format: .timetable / .timetable <day>`)
+            .then((msg) => {
+                msg.delete({ timeout: 6000 });
+                message.delete({ timeout: 6000 });
+            });
     },
 };
