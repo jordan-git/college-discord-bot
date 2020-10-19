@@ -59,13 +59,13 @@ export const command: Command = {
 
             // If not in schedule but is a week day
             if (!inSchedule && isDay(args[0])) {
-                const content = 'You have no classes on that day.';
+                const content = 'You have no classes on that day';
                 const responseMsg = await message.channel.send(content);
 
                 responseMsg.delete({ timeout: 6000 });
                 message.delete();
             } else if (!inSchedule) {
-                const content = 'Invalid day of the week.';
+                const content = 'Invalid day of the week';
                 const responseMsg = await message.channel.send(content);
 
                 responseMsg.delete({ timeout: 6000 });

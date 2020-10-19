@@ -1,3 +1,9 @@
+import * as dotenv from 'dotenv';
+import { GuildMember } from 'discord.js';
+
+// Store .env variables in process.env
+dotenv.config();
+
 // Assists on getting day by string name with Date.getDay()
 export const weekDays = [
     'Monday',
@@ -51,6 +57,13 @@ export const getIdFromMessage = (content: string) => {
 
         return content;
     }
+};
+
+export const isAdmin = (member: GuildMember) => {
+    for (let adminRole of process.env.ADMIN_ROLES.split(',')) {
+        if (member.roles.cache.has(adminRole)) return true;
+    }
+    return false;
 };
 
 type DailyTimetable = {
