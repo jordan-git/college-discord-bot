@@ -42,7 +42,10 @@ export const command: Command = {
 
             responseMsg.delete({ timeout: 30000 });
             message.delete();
-        } else if (args.length === 1) {
+            return;
+        }
+
+        if (args.length === 1) {
             let inSchedule = false;
 
             // Add details for entered day if it exist
@@ -69,19 +72,21 @@ export const command: Command = {
                 const responseMsg = await message.channel.send(content);
 
                 responseMsg.delete({ timeout: 6000 });
-                message.delete();
+                message.delete({ timeout: 6000 });
             } else {
                 const responseMsg = await message.channel.send(embed);
 
                 responseMsg.delete({ timeout: 30000 });
                 message.delete();
             }
-        } else {
-            const content = '**Format:** .timetable / .timetable <day>';
-            const responseMsg = await message.channel.send(content);
 
-            responseMsg.delete({ timeout: 6000 });
-            message.delete({ timeout: 3000 });
+            return;
         }
+
+        const content = '**Format:** .timetable / .timetable <day>';
+        const responseMsg = await message.channel.send(content);
+
+        responseMsg.delete({ timeout: 6000 });
+        message.delete({ timeout: 3000 });
     },
 };
