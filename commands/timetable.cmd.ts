@@ -75,7 +75,7 @@ export const command: Command = {
             for (const day of weeklySchedule) {
                 if (
                     day.name.toLowerCase() ===
-                    weekDays[new Date().getDay()].toLowerCase()
+                    weekDays[new Date().getDay() - 1].toLowerCase()
                 ) {
                     embed.setTitle(`Timetable - ${day.name}`);
                     for (const _class of day.schedule) {
@@ -83,13 +83,12 @@ export const command: Command = {
                     }
                 }
             }
-            return message.channel.send(embed).then((msg) => {
-                msg.delete({ timeout: 10000 });
-                message.delete({ timeout: 10000 });
-            });
-        }
 
-        if (args.length === 1) {
+            message.channel.send(embed).then((msg) => {
+                msg.delete({ timeout: 10000 });
+                message.delete();
+            });
+        } else if (args.length === 1) {
             let inSchedule = false;
             for (const day of weeklySchedule) {
                 if (day.name.toLowerCase() === args[0].toLowerCase()) {
@@ -111,25 +110,24 @@ export const command: Command = {
                     .send('You have no classes on that day.')
                     .then((msg) => {
                         msg.delete({ timeout: 6000 });
-                        message.delete({ timeout: 6000 });
+                        message.delete();
                     });
             else if (!inSchedule)
                 message.channel.send('Invalid day of the week.').then((msg) => {
                     msg.delete({ timeout: 6000 });
-                    message.delete({ timeout: 6000 });
+                    message.delete();
                 });
             else
-                return message.channel.send(embed).then((msg) => {
+                message.channel.send(embed).then((msg) => {
+                    msg.delete({ timeout: 30000 });
+                    message.delete();
+                });
+        } else
+            message.channel
+                .send(`Format: .timetable / .timetable <day>`)
+                .then((msg) => {
                     msg.delete({ timeout: 6000 });
                     message.delete({ timeout: 6000 });
                 });
-        }
-
-        message.channel
-            .send(`Format: .timetable / .timetable <day>`)
-            .then((msg) => {
-                msg.delete({ timeout: 6000 });
-                message.delete({ timeout: 6000 });
-            });
     },
 };

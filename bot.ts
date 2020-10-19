@@ -7,12 +7,9 @@ import { Command } from './commands/command';
 // Store .env variables in process.env
 dotenv.config();
 
-interface DynamicCmdsClient extends Client {
-    commands?: Collection<string, Command>;
-}
-
 export class Bot {
-    private client: DynamicCmdsClient;
+    private commands: Collection<string, Command>;
+    private client: Client;
 
     constructor() {
         this.start();
@@ -22,7 +19,7 @@ export class Bot {
         console.log('Starting bot..');
 
         this.client = new Client();
-        this.client.commands = new Collection();
+        this.commands = new Collection();
 
         // Get .cmd.ts file names only
         const commandFiles = readdirSync('./commands').filter((file) =>
@@ -32,7 +29,7 @@ export class Bot {
         // Import each command found and store in client.commands
         for (const file of commandFiles) {
             const { command } = require(`./commands/${file}`);
-            this.client.commands.set(command.name, command);
+            this.commands.set(command.name, command);
         }
 
         this.client.on('ready', () => {
@@ -55,8 +52,8 @@ export class Bot {
 
             // Check if command exists in client.commands
             const command =
-                this.client.commands.get(commandName) ||
-                this.client.commands.find(
+                this.commands.get(commandName) ||
+                this.commands.find(
                     (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
                 );
 
