@@ -27,8 +27,14 @@ export class Bot {
                 new winston.transports.Console(),
                 new winston.transports.File({ filename: 'combined.logs' }),
             ],
-            format: winston.format.printf(
-                (log) => `[${log.level.toUpperCase()}] - ${log.message}`
+            format: winston.format.combine(
+                winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+                winston.format.printf(
+                    (log) =>
+                        `[${log.timestamp}] [${log.level.toUpperCase()}] - ${
+                            log.message
+                        }`
+                )
             ),
         });
 
