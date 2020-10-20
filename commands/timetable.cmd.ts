@@ -1,6 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 import { Command } from './command';
-import { weeklySchedule, todayAsString, isDay, getStartHour } from './util';
+import { todayAsString, isDay } from './util';
+import { weeklySchedule } from '../data/schedule';
 
 export const command: Command = {
     name: 'timetable',
@@ -8,7 +9,6 @@ export const command: Command = {
     description: 'Timetable',
     async execute(message, args) {
         const embed = new MessageEmbed()
-            .setTitle('Timetable')
             // .setAuthor('College Assistant')
             .setDescription(
                 `**Current Time:** ${new Date().toLocaleTimeString()}`
@@ -24,14 +24,14 @@ export const command: Command = {
         if (args.length === 0) {
             // Add fields for today's classes
             for (const day of weeklySchedule) {
-                if (day.name.toLowerCase() === todayAsString().toLowerCase()) {
-                    embed.setTitle(`Timetable\t\t[${day.name}]`);
+                if (day.day.toLowerCase() === todayAsString().toLowerCase()) {
+                    embed.setTitle(`\tTimetable\t\t[${day.day}]`);
                     for (const _class of day.schedule) {
                         embed.addField(
-                            _class.subject,
+                            _class.subject.name,
                             _class.time +
-                                (_class.moodle
-                                    ? `\n[Moodle](${_class.moodle})`
+                                (_class.subject.moodle
+                                    ? `\n[Moodle](${_class.subject.moodle})`
                                     : '')
                         );
                     }
@@ -50,10 +50,10 @@ export const command: Command = {
 
             // Add details for entered day if it exist
             for (const day of weeklySchedule) {
-                if (day.name.toLowerCase() === args[0].toLowerCase()) {
+                if (day.day.toLowerCase() === args[0].toLowerCase()) {
                     inSchedule = true;
 
-                    embed.setTitle(`Timetable\t\t[${day.name}]`);
+                    embed.setTitle(`\tTimetable\t\t[${day.day}]`);
                     for (const _class of day.schedule) {
                         embed.addField(_class.subject, _class.time);
                     }
