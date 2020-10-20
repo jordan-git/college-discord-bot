@@ -27,5 +27,6 @@ export const command: Command = {
 
         responseMsg.delete({ timeout: 10000 });
         message.delete();
+        return { success: true };
     },
 };

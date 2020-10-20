@@ -4,6 +4,7 @@ import { Client, Collection } from 'discord.js';
 import * as winston from 'winston';
 
 import { Command } from './commands/command';
+import { todayAsString } from './commands/util';
 
 // Store .env variables in process.env
 dotenv.config();
@@ -99,9 +100,9 @@ export class Bot {
 
             this.logger.log(
                 'info',
-                `Executing command '${commandName}' with args [${args.join(
-                    ', '
-                )}]`
+                `Executing command '${commandName}' with ${
+                    args.length ? `args [${args.join(', ')}]` : 'no args'
+                }`
             );
 
             // Check if command exists in client.commands (alias support)
@@ -114,13 +115,30 @@ export class Bot {
             if (!command) return;
 
             try {
-                command.execute(message, args);
-                this.logger.log(
-                    'info',
-                    `Executed command '${commandName}' successfully`
-                );
+                const execute = await command.execute(message, args);
+                if (execute.success === true) {
+                    execute.info
+                        ? this.logger.log(
+                              'info',
+                              `Executed command '${commandName}': ${execute.info}`
+                          )
+                        : this.logger.log(
+                              'info',
+                              `Executed command '${commandName}' successfully`
+                          );
+                } else
+                    execute.info
+                        ? this.logger.log(
+                              'info',
+                              `Error executing command  '${commandName}': ${execute.info}`
+                          )
+                        : this.logger.log(
+                              'info',
+                              `Error executing command '${commandName}'`
+                          );
             } catch (error) {
                 this.logger.log('error', error);
+                console.log(error);
             }
         });
     }

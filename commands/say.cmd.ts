@@ -13,7 +13,10 @@ export const command: Command = {
 
             responseMsg.delete({ timeout: 6000 });
             message.delete();
-            return;
+            return {
+                success: false,
+                info: `${message.author.username} is not an admin`,
+            };
         }
 
         // Invalid format
@@ -23,7 +26,7 @@ export const command: Command = {
 
             responseMsg.delete({ timeout: 6000 });
             message.delete({ timeout: 10000 });
-            return;
+            return { success: false, info: 'Invalid format' };
         }
 
         // Convert mention to channel ID and validate it
@@ -37,7 +40,7 @@ export const command: Command = {
 
             responseMsg.delete({ timeout: 6000 });
             message.delete({ timeout: 10000 });
-            return;
+            return { success: false, info: 'Invalid ID' };
         }
 
         if (channel.type !== 'text') {
@@ -47,10 +50,11 @@ export const command: Command = {
 
             responseMsg.delete({ timeout: 6000 });
             message.delete({ timeout: 10000 });
-            return;
+            return { success: false, info: 'Invalid channel' };
         }
 
         (channel as TextChannel).send(args.slice(1).join(' '));
         message.delete();
+        return { success: true };
     },
 };

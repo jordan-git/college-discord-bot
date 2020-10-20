@@ -4,5 +4,8 @@ export interface Command {
     name: string;
     aliases?: string[];
     description: string;
-    execute(message: Message, args?: string[]): void;
+    execute(
+        message: Message,
+        args?: string[]
+    ): Promise<{ success: boolean; info?: string }>;
 }

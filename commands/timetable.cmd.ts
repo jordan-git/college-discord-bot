@@ -42,16 +42,21 @@ export const command: Command = {
 
             responseMsg.delete({ timeout: 30000 });
             message.delete();
-            return;
+            return {
+                success: true,
+                info: `Sent ${todayAsString()}'s timetable`,
+            };
         }
 
         if (args.length === 1) {
             let inSchedule = false;
+            let dayString = '';
 
             // Add details for entered day if it exist
             for (const day of weeklySchedule) {
                 if (day.day.toLowerCase() === args[0].toLowerCase()) {
                     inSchedule = true;
+                    dayString = day.day;
 
                     embed.setTitle(`\tTimetable\t\t[${day.day}]`);
                     for (const _class of day.schedule) {
@@ -67,20 +72,30 @@ export const command: Command = {
 
                 responseMsg.delete({ timeout: 6000 });
                 message.delete();
-            } else if (!inSchedule) {
+                return {
+                    success: true,
+                    info: 'No classes that day',
+                };
+            }
+            if (!inSchedule) {
                 const content = 'Invalid day of the week';
                 const responseMsg = await message.channel.send(content);
 
                 responseMsg.delete({ timeout: 6000 });
                 message.delete({ timeout: 6000 });
-            } else {
-                const responseMsg = await message.channel.send(embed);
-
-                responseMsg.delete({ timeout: 30000 });
-                message.delete();
+                return {
+                    success: true,
+                    info: 'Invalid day',
+                };
             }
+            const responseMsg = await message.channel.send(embed);
 
-            return;
+            responseMsg.delete({ timeout: 30000 });
+            message.delete();
+            return {
+                success: true,
+                info: `Sent ${dayString}'s timetable`,
+            };
         }
 
         const content = '**Format:** .timetable / .timetable <day>';
@@ -88,5 +103,9 @@ export const command: Command = {
 
         responseMsg.delete({ timeout: 6000 });
         message.delete({ timeout: 3000 });
+        return {
+            success: true,
+            info: 'Invalid format',
+        };
     },
 };
