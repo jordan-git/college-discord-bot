@@ -1,10 +1,9 @@
 import * as dotenv from 'dotenv';
-import { readdirSync } from 'fs';
-import { Client, Collection } from 'discord.js';
 import * as winston from 'winston';
+import { promises, readdirSync } from 'fs';
+import { Client, Collection } from 'discord.js';
 
 import { Command } from './commands/command';
-import { todayAsString } from './commands/util';
 
 // Store .env variables in process.env
 dotenv.config();
@@ -14,14 +13,13 @@ dotenv.config();
 export class Bot {
     private client: Client;
     private logger: winston.Logger;
-
     private commands: Collection<string, Command>;
 
     constructor() {
         this.start();
     }
 
-    private start() {
+    private async start() {
         this.client = new Client();
         this.logger = winston.createLogger({
             transports: [
@@ -43,27 +41,29 @@ export class Bot {
 
         this.logger.log('info', 'Starting bot');
 
-        // Get .cmd.ts file names only
-        const commandFiles = readdirSync('./commands').filter((file) =>
-            file.endsWith('.cmd.ts')
-        );
+        // Get *.cmd.ts file names from command directory
+        const commandFiles = (
+            await promises.readdir('./commands')
+        ).filter((file) => file.endsWith('.cmd.ts'));
 
-        // Import each command found and store in client.commands
+        // Import each command and store them in this.commands
         for (const file of commandFiles) {
-            const { command } = require(`./commands/${file}`);
+            const { command } = await import(`./commands/${file}`);
             this.commands.set(command.name, command);
         }
 
+        // Configure logging
         this.client.on('debug', (m) => this.logger.log('debug', m));
         this.client.on('warn', (m) => this.logger.log('warn', m));
         this.client.on('error', (m) => this.logger.log('error', m));
-
         process.on('uncaughtException', (error) =>
             this.logger.log('error', error)
         );
 
+        // Add on ready listener
         this.handleReady();
 
+        // Add on message listener
         this.handleMessage();
 
         this.client.login(process.env.DISCORD_TOKEN);
@@ -73,6 +73,7 @@ export class Bot {
         this.client.on('ready', () => {
             this.logger.log('info', `Logged in as ${this.client.user.tag}`);
 
+            // Set custom status to "Listening to your commands"
             this.client.user.setPresence({
                 activity: {
                     name: 'your commands',
@@ -80,9 +81,11 @@ export class Bot {
                 },
                 status: 'online',
             });
+
             // TODO: Load react-role messages
         });
     }
+
     private handleMessage() {
         this.client.on('message', async (message) => {
             if (
@@ -105,7 +108,7 @@ export class Bot {
                 }`
             );
 
-            // Check if command exists in client.commands (alias support)
+            // Check if command exists in this.commands (with alias support)
             const command =
                 this.commands.get(commandName) ||
                 this.commands.find(
@@ -115,30 +118,36 @@ export class Bot {
             if (!command) return;
 
             try {
+                // Execute command and log info
                 const execute = await command.execute(message, args);
+
                 if (execute.success === true) {
-                    execute.info
-                        ? this.logger.log(
-                              'info',
-                              `Executed command '${commandName}': ${execute.info}`
-                          )
-                        : this.logger.log(
-                              'info',
-                              `Executed command '${commandName}' successfully`
-                          );
-                } else
-                    execute.info
-                        ? this.logger.log(
-                              'info',
-                              `Error executing command  '${commandName}': ${execute.info}`
-                          )
-                        : this.logger.log(
-                              'info',
-                              `Error executing command '${commandName}'`
-                          );
+                    if (execute.info) {
+                        this.logger.log(
+                            'info',
+                            `Executed command '${commandName}': ${execute.info}`
+                        );
+                    } else {
+                        this.logger.log(
+                            'info',
+                            `Executed command '${commandName}' successfully`
+                        );
+                    }
+                } else {
+                    if (execute.info) {
+                        this.logger.log(
+                            'info',
+                            `Error executing command  '${commandName}': ${execute.info}`
+                        );
+                    } else {
+                        this.logger.log(
+                            'info',
+                            `Error executing command '${commandName}'`
+                        );
+                    }
+                }
             } catch (error) {
                 this.logger.log('error', error);
-                console.log(error);
             }
         });
     }

@@ -31,7 +31,7 @@ export const todayAsString = () => {
  * @returns <boolean> true or false
  */
 export const isDay = (input: string) => {
-    return weekDays.map((e) => e.toLowerCase()).includes(input.toLowerCase());
+    return weekDays.some((e) => e.toLowerCase() === input.toLowerCase());
 };
 
 /**
