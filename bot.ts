@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as winston from 'winston';
-import { promises, readdirSync } from 'fs';
+import { promises } from 'fs';
 import { Client, Collection } from 'discord.js';
 
 import { Command } from './commands/command';
@@ -70,7 +70,7 @@ export class Bot {
     }
 
     private handleReady() {
-        this.client.on('ready', () => {
+        this.client.once('ready', () => {
             this.logger.log('info', `Logged in as ${this.client.user.tag}`);
 
             // Set custom status to "Listening to your commands"
@@ -98,7 +98,7 @@ export class Bot {
             const args = message.content
                 .slice(process.env.PREFIX.length)
                 .trim()
-                .split(' ');
+                .split(/ +/);
             const commandName = args.shift().toLowerCase();
 
             this.logger.log(
